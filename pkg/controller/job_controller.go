@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	cronNamePrefix = "skyform-ai-job"
+	cronNamePrefix = "skyform-ai-job-"
 )
 
 type JobController struct {
@@ -58,7 +58,7 @@ func (jc *JobController) CreateCronJob(obj *types.MonitorObject, customConf type
 		JobSpec:           &jobSpec,
 	}
 
-	cronJobSpec.Name = cronNamePrefix + strconv.Itoa(appConf.Id) + strconv.Itoa(obj.ID)
+	cronJobSpec.Name = cronNamePrefix + strconv.Itoa(appConf.Id) + "-" + strconv.Itoa(obj.ID)
 	cronJobSpecBytes, err := json.Marshal(&cronJobSpec)
 	if err != nil {
 		return err
