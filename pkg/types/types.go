@@ -18,17 +18,18 @@ type ApplicationConfig struct {
 }
 
 type GlobalConfig struct {
-	MysqlHost                  string   `json:"mysql_host"`
-	MysqlUser                  string   `json:"mysql_user"`
-	MysqlPwd                   string   `json:"mysql_pwd"`
-	MysqlDB                    string   `json:"mysql_db"`
-	Params                     []string `json:"params"`
-	Namespace                  string
-	SuccessfulJobsHistoryLimit int32
-	FailedJobsHistoryLimit     int32
-	ConcurrencyPolicy          string
-	ImagePullPolicy            string
-	JobMaxRunTime              string
+	MysqlHost          string   `json:"mysql_host"`
+	MysqlUser          string   `json:"mysql_user"`
+	MysqlPwd           string   `json:"mysql_pwd"`
+	MysqlDB            string   `json:"mysql_db"`
+	Params             []string `json:"params"`
+	Namespace          string
+	ConcurrencyPolicy  string
+	ImagePullPolicy    string
+	JobMaxRunTime      string
+	MaxConcurrencyRuns int32
+	MaxFails           int32
+	HistoryLimit       int32
 }
 
 type ColumnMap struct {

@@ -18,6 +18,9 @@ var (
 	jobMaxRunTime          string
 	globalConfig           string
 	applicationConfig      string
+	maxConcurrencyRuns     int
+	maxFails               int
+	historyLimit           int
 )
 
 func init() {
@@ -26,6 +29,9 @@ func init() {
 	flag.StringVar(&jobMaxRunTime, "job_max_runtime", "4m20s", "job max run time")
 	flag.StringVar(&globalConfig, "global_config_file", "G:/opt/config.json", "global config file")
 	flag.StringVar(&applicationConfig, "applicationConfig", "G:/opt/application.json", "application config file")
+	flag.IntVar(&maxConcurrencyRuns, "max_concurrency_runs", 2, "max concurrency runs")
+	flag.IntVar(&maxFails, "max_fails", 2, "max fails")
+	flag.IntVar(&historyLimit, "history_limit", 5, "history limit")
 	flag.Set("alsologtostderr", "true")
 	flag.Parse()
 }
@@ -33,9 +39,11 @@ func init() {
 func main() {
 	customConfig := v1.CustomConfig{
 		Global: v1.GlobalConfig{
-			FailedJobsHistoryLimit: int32(failedJobsHistoryLimit),
-			ConcurrencyPolicy:      concurrencyPolicy,
-			JobMaxRunTime:          jobMaxRunTime,
+			ConcurrencyPolicy:  concurrencyPolicy,
+			JobMaxRunTime:      jobMaxRunTime,
+			MaxConcurrencyRuns: int32(maxConcurrencyRuns),
+			MaxFails:           int32(maxFails),
+			HistoryLimit:       int32(historyLimit),
 		},
 	}
 	err := LoadConfig(globalConfig, &customConfig)

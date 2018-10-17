@@ -52,20 +52,20 @@ func (jc *JobController) CreateCronJob(obj *types.MonitorObject, customConf type
 	cronJobSpec := types.CronSpec{
 		Schedule:          appConf.Cron,
 		OverlapPolicy:     customConf.Global.ConcurrencyPolicy,
-		MaxConcurrentRuns: 2,
-		MaxFails:          2,
-		HistoryLimit:      5,
+		MaxConcurrentRuns: customConf.Global.MaxConcurrencyRuns,
+		MaxFails:          customConf.Global.MaxFails,
+		HistoryLimit:      customConf.Global.HistoryLimit,
 		JobSpec:           &jobSpec,
 	}
 
 	cronJobSpec.Name = cronNamePrefix + strconv.Itoa(appConf.Id) + strconv.Itoa(obj.ID)
 	cronJobSpecBytes, err := json.Marshal(&cronJobSpec)
 	if err != nil {
-		glog.Fatal("Failed to marshal cronJobSpec")
+		return err
 	}
-	fmt.Println("Submit cron " + string(cronJobSpecBytes))
+	glog.V(6).Info("Submit cron " + cronJobSpec.Name)
 	if err := CreateCron(cronJobSpecBytes); err != nil {
-		glog.Fatal(err.Error())
+		return err
 	}
 
 	return nil

@@ -30,11 +30,14 @@ func (c *Controller) Create(w http.ResponseWriter, req *http.Request) {
 	c.jobController.DeleteCronJob(c.customConfig)
 	monitorObjects := c.dbWorker.List()
 	for _, monitorObject := range monitorObjects {
-		glog.Infof("creating cronjob for monitor object: %v\n", monitorObject)
+		glog.V(4).Infof("Creating cronjob for monitor object: %v\n", monitorObject)
 		for _, appConf := range c.appConfig.App {
 			if monitorObject.MonitorTypes&appConf.Id != 0 {
 				objParams := c.dbWorker.GetParams(monitorObject.Metric, appConf.Id)
-				c.jobController.CreateCronJob(monitorObject, c.customConfig, appConf, objParams)
+				err := c.jobController.CreateCronJob(monitorObject, c.customConfig, appConf, objParams)
+				if err != nil {
+					glog.Errorf("Failed to create cronjob: %s", err.Error())
+				}
 			}
 		}
 	}
