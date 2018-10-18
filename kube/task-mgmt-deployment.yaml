@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: task-mgmt-deployment
+spec:
+  selector:
+    matchLabels:
+      app: task-mgmt
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: task-mgmt
+    spec:
+      # Create entries in containers /etc/hosts, so AIP master
+      # installed on the physical host can be accessed.
+      # Modify the IP and hostname for your own environment:
+      hostAliases:
+      - ip: "192.168.1.107"
+        hostnames:
+        - "kube07"
+      - ip: "192.168.1.102"
+        hostnames:
+        - "kube02"
+      - ip: "192.168.1.101"
+        hostnames:
+        - "kube01"
+      - ip: "192.168.1.111"
+        hostnames:
+        - "kube11"
+      containers:
+      - name: task-mgmt
+        image: rivernet/task-mgmt
+        imagePullPolicy: Always
+        # You must set the following env variables to locate the 
+        # AIP binary.
+        # For example, the NFS share is mounted as /opt/share,
+        # and AIP is installed under /opt/share/skyformai-8.0
+        env:
+        - name: CB_ENVDIR
+          value: /opt/share/skyformai-8.0/etc
+        - name: CB_BINDIR
+          value: /opt/share/skyformai-8.0/bin
+        stdin: true
+        tty: true
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: nfs
+            mountPath: /opt/share
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+          claimName: nfs
