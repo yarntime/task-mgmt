@@ -43,10 +43,20 @@ func (jc *JobController) CreateCronJob(obj *types.MonitorObject, customConf type
 		jobCommand += objParams[i] + " "
 	}
 
+	containerOpts := []string{}
+	if appConf.CpuLimit > float32(0) {
+		containerOpts = append(containerOpts, fmt.Sprintf("--cpu-shares=%d", int(appConf.CpuLimit*1024)))
+	}
+	if appConf.MemoryLimit != "" {
+		containerOpts = append(containerOpts, fmt.Sprintf("--memory=%s", appConf.MemoryLimit))
+	}
+
 	// Create job specification
 	jobSpec := types.JobSpec{
-		Command:    jobCommand,
-		MaxRunTime: customConf.Global.JobMaxRunTime,
+		Command:          jobCommand,
+		MaxRunTime:       customConf.Global.JobMaxRunTime,
+		ContainerImage:   appConf.Image,
+		ContainerOptions: containerOpts,
 	}
 	// Create cron job specification
 	cronJobSpec := types.CronSpec{
