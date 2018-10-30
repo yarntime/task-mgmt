@@ -40,7 +40,7 @@ func (jc *JobController) CreateCronJob(obj *types.MonitorObject, customConf type
 	jobCommand := "python main.py "
 	params := componentParams(obj, objParams)
 	for i := 0; i < len(params); i++ {
-		jobCommand += objParams[i] + " "
+		jobCommand += params[i] + " "
 	}
 
 	containerOpts := []string{}
@@ -50,6 +50,7 @@ func (jc *JobController) CreateCronJob(obj *types.MonitorObject, customConf type
 	if appConf.MemoryLimit != "" {
 		containerOpts = append(containerOpts, fmt.Sprintf("--memory=%s", appConf.MemoryLimit))
 	}
+
 
 	// Create job specification
 	jobSpec := types.JobSpec{
